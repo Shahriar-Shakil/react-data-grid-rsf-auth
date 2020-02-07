@@ -27,6 +27,12 @@ const columns = [
     key: "email",
     name: "Email"
   },
+
+  {
+    key: "street",
+    name: "Street"
+  },
+
   {
     key: "street",
     name: "Street"
@@ -42,6 +48,18 @@ const columns = [
   {
     key: "jobTitle",
     name: "Job Title"
+  },
+  {
+    key: "catchPhrase",
+    name: "Catch Phrase"
+  },
+  {
+    key: "jobArea",
+    name: "Job Area"
+  },
+  {
+    key: "jobType",
+    name: "Job Type"
   },
   {
     key: "catchPhrase",
