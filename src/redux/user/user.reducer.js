@@ -1,35 +1,40 @@
-import UserActionTypes from "./user.types";
+import {types} from "./user.actions";
+import {loginStorage} from "../../localStorage/index.js";
 
-const INITIAL_STATE = {
-  isAuthenticated: true
-  // token: null,
-  // currentUser: [],
-  // error: null
+const initialState = {
+  loading: false,
+  loggedIn: false,
+  user: null,
+  providerData: null
 };
-export default function userReducer(state = INITIAL_STATE, {type, payload}) {
-  switch (type) {
-    // case UserActionTypes.LOGIN_SUCCESS:
-    //   return {
-    //     ...state,
-    //     isAuthenticated: true,
-    //     currentUser: payload,
-    //     token: payload.token
-    //   };
-    // case UserActionTypes.LOGIN_FAILURE:
-    //   return {
-    //     ...state,
-    //     isAuthenticated: false,
-    //     error: payload
-    //   };
-    // case UserActionTypes.LOGOUT_SUCCESS:
-    //   return {
-    //     ...state,
-    //     isAuthenticated: false
-    //   };
-    case "LOGIN_SUCCESS":
+
+export default function loginReducer(state = initialState, action = {}) {
+  switch (action.type) {
+    case types.LOGIN.REQUEST:
+    case types.LOGOUT.REQUEST:
       return {
         ...state,
-        isAuthenticated: true
+        loading: true
+      };
+    case types.LOGIN.SUCCESS:
+      return {
+        ...state,
+        loading: false,
+        loggedIn: true,
+        user: action.user,
+        providerData: action.user.providerData
+      };
+    case types.LOGIN.FAILURE:
+      return {
+        ...state,
+        loading: false
+      };
+    case types.LOGOUT.SUCCESS:
+      return initialState;
+    case types.LOGOUT.FAILURE:
+      return {
+        ...state,
+        loading: false
       };
     default:
       return state;

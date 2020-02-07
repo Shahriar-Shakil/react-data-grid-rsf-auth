@@ -1,12 +1,13 @@
-import React, {lazy, Suspense} from "react";
+import React, {lazy, Suspense, useEffect} from "react";
 import {Redirect, Switch, Route} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {Spin} from "antd";
 import {LoginForm} from "./components/authentication/login/index";
 import {RegisterForm} from "./components/authentication/registration";
+import {useHistory} from "react-router-dom";
 const Dashboard = lazy(() => import("./components/dashboard"));
 export function PrivateRoute({children, ...rest}) {
-  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
+  const isAuthenticated = useSelector((state) => state.userData.loggedIn);
   return (
     <Route
       {...rest}
@@ -27,7 +28,11 @@ export function PrivateRoute({children, ...rest}) {
 }
 
 function App() {
-  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
+  let history = useHistory();
+  const isAuthenticated = useSelector((state) => state.userData.loggedIn);
+  useEffect(() => {
+    isAuthenticated && history.push("/dashboard");
+  }, [isAuthenticated]);
   return (
     <div className="Apps">
       <Suspense
@@ -46,8 +51,6 @@ function App() {
           </Route>
 
           <PrivateRoute path="/">
-            {isAuthenticated && <Redirect to="/dashboard" />}
-
             <Route exact path="/dashboard">
               <Dashboard />
             </Route>

@@ -1,16 +1,16 @@
 import React from "react";
-import {Row} from "antd";
 import ReactDataGridContainer from "../reactDataGrid";
 import createRowData from "../reactDataGrid/createRowData";
 import styled from "styled-components";
 import {Layout} from "antd";
+import PageHeader from "../header";
 
-const {Header, Footer, Sider, Content} = Layout;
+const {Header, Footer, Content} = Layout;
 const Dashboard = () => {
   return (
     <StyledLayout className="h100">
       <Header>
-        <h2>React Data Grid</h2>
+        <PageHeader />
       </Header>
       <Content>
         <ReactDataGridContainer initialRows={createRowData(100)} />
@@ -24,10 +24,7 @@ export default Dashboard;
 
 const StyledLayout = styled(Layout)`
   .ant-layout-header {
-    text-align: center;
-    h2 {
-      color: #fff;
-    }
+    background: #16a085 !important;
   }
   .ant-layout-content {
     .rdg-viewport {
@@ -37,5 +34,7 @@ const StyledLayout = styled(Layout)`
 
   .ant-layout-footer {
     text-align: center;
+    background: #2c3e50 !important;
+    color: #3498db;
   }
 `;

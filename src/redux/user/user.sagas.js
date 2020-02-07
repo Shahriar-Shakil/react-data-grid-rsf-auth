@@ -1,21 +1,53 @@
-import UserActionTypes from "./user.types";
-import {takeLatest, put, all, call} from "redux-saga/effects";
+import firebase from "firebase";
+import {all, call, fork, put, take, takeEvery} from "redux-saga/effects";
 
-import {loginSuccess, loginFailure} from "./user.actions";
-import login from "../../api/loginApi";
+import {
+  types,
+  loginSuccess,
+  loginFailure,
+  logoutSuccess,
+  logoutFailure
+} from "./user.actions.js";
 
-export function* signInWithUserID(payload) {
+import rsf from "../rsf";
+
+const authProvider = new firebase.auth.GoogleAuthProvider();
+
+function* loginSaga() {
   try {
-    const {
-      data: {user, token, employee_info, office_info}
-    } = yield call(login, payload);
-    //console.log(user)
+    yield call(rsf.auth.signInWithPopup, authProvider);
 
-    yield put(loginSuccess({user, token, employee_info, office_info}));
+    // successful login will trigger the loginStatusWatcher, which will update the state
   } catch (error) {
     yield put(loginFailure(error));
   }
 }
-export function* userSagas() {
-  yield takeLatest(UserActionTypes.EMAIL_SIGN_IN_REQUEST, signInWithUserID);
+
+function* logoutSaga() {
+  try {
+    yield call(rsf.auth.signOut);
+    // successful logout will trigger the loginStatusWatcher, which will update the state
+  } catch (error) {
+    yield put(logoutFailure(error));
+  }
+}
+
+function* loginStatusWatcher() {
+  // events on this channel fire when the user logs in or logs out
+  const channel = yield call(rsf.auth.channel);
+
+  while (true) {
+    const {user} = yield take(channel);
+    if (user) {
+      yield put(loginSuccess(user));
+    } else yield put(logoutSuccess());
+  }
+}
+
+export default function* loginRootSaga() {
+  yield fork(loginStatusWatcher);
+  yield all([
+    takeEvery(types.LOGIN.REQUEST, loginSaga),
+    takeEvery(types.LOGOUT.REQUEST, logoutSaga)
+  ]);
 }
