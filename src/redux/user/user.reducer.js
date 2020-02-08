@@ -1,5 +1,4 @@
 import {types} from "./user.actions";
-import {loginStorage} from "../../localStorage/index.js";
 
 const initialState = {
   loading: false,
